@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img" aria-label="Janoon mark (reversed)">
+  <title>Janoon mark (reversed)</title>
+  <defs>
+    
+  </defs>
+  <g id="mark">
+      <rect x="14" y="14" width="16" height="16" fill="#F9556D"/>
+      <path d="M36 14 H86 V62 A28 28 0 0 1 30 62 V54 H46 V62 A12 12 0 0 0 70 62 V30 H36 Z" fill="#FFFFFF"/>
+    </g>
+</svg>

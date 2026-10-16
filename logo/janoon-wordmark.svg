@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 100" width="660" height="100" role="img" aria-label="Janoon wordmark">
+  <title>Janoon wordmark</title>
+  <defs>
+    <clipPath id="cJ"><rect width="68" height="100"/></clipPath>
+    <clipPath id="cA"><rect width="84" height="100"/></clipPath>
+    <clipPath id="cN"><rect width="84" height="100"/></clipPath>
+    <clipPath id="cO"><rect width="100" height="100"/></clipPath>
+    <clipPath id="cI"><rect width="16" height="100"/></clipPath>
+    <clipPath id="cC"><rect width="92" height="100"/></clipPath>
+    <g id="gJ" clip-path="url(#cJ)"><path d="M60 -10 V66 A26 26 0 0 1 8 66 V58"/></g>
+    <g id="gA" clip-path="url(#cA)"><path d="M4.5 112 L42 2 L79.5 112" stroke-linejoin="miter" stroke-miterlimit="8"/><path d="M18 64 H66"/></g>
+    <g id="gN" clip-path="url(#cN)"><path d="M8 112 V0 L76 100 V-12" stroke-linejoin="miter" stroke-miterlimit="8"/></g>
+    <g id="gO" clip-path="url(#cO)"><circle cx="50" cy="50" r="42"/></g>
+    <g id="gI" clip-path="url(#cI)"><path d="M8 -10 V110"/></g>
+    <g id="gC" clip-path="url(#cC)"><path d="M82.2 77 A42 42 0 1 1 82.2 23"/></g>
+    <g id="wordmark" fill="none" stroke="#01358D" stroke-width="16">
+      <use href="#gJ" x="0"/><use href="#gA" x="96"/><use href="#gN" x="208"/>
+      <use href="#gO" x="320"/><use href="#gO" x="448"/><use href="#gN" x="576"/>
+    </g>
+    <g id="inc" fill="none" stroke="#01358D" stroke-width="16">
+      <use href="#gI" x="0"/><use href="#gN" x="44"/><use href="#gC" x="156"/>
+    </g>
+  </defs>
+  <use href="#wordmark"/>
+</svg>
