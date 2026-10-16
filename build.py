@@ -2,6 +2,8 @@
 """Generate every page of janoons.com from shared templates. Run: python3 build.py (in site/)."""
 import os, datetime
 OUT = os.path.dirname(os.path.abspath(__file__))
+BASE = os.environ.get("BASE", "").rstrip("/")   # e.g. BASE=/janoons-site for GitHub Pages project sites
+B = lambda p: BASE + p
 
 MARK = '''<svg class="mark" viewBox="0 0 100 100" aria-hidden="true"><rect class="spark" x="14" y="14" width="16" height="16"/><path d="M36 14 H86 V62 A28 28 0 0 1 30 62 V54 H46 V62 A12 12 0 0 0 70 62 V30 H36 Z" fill="currentColor"/></svg>'''
 WORDMARK_DEFS = '''<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -13,21 +15,21 @@ WORDMARK_DEFS = '''<svg width="0" height="0" style="position:absolute" aria-hidd
 <g id="wordmark" fill="none" stroke="currentColor" stroke-width="16"><use href="#gJ" x="0"/><use href="#gA" x="96"/><use href="#gN" x="208"/><use href="#gO" x="320"/><use href="#gO" x="448"/><use href="#gN" x="576"/></g>
 </defs></svg>'''
 ARR = '<span class="arr" aria-hidden="true">&rarr;</span>'
-LOCKUP = f'<a class="lockup" href="/" aria-label="Janoon Inc. — home">{MARK}<svg class="wm" viewBox="0 0 660 100" aria-hidden="true"><use href="#wordmark"/></svg></a>'
+LOCKUP = f'<a class="lockup" href="{B("/")}" aria-label="Janoon Inc. — home">{MARK}<svg class="wm" viewBox="0 0 660 100" aria-hidden="true"><use href="#wordmark"/></svg></a>'
 NAV_ITEMS = [("/services.html","Services"),("/government.html","Government"),("/contact.html","Contact")]
 
 def nav(current, dark=True):
-    links = "".join(f'<li><a href="{h}"{" aria-current=\"page\"" if current==h else ""}>{l}</a></li>' for h,l in NAV_ITEMS)
+    links = "".join(f'<li><a href="{B(h)}"{" aria-current=\"page\"" if current==h else ""}>{l}</a></li>' for h,l in NAV_ITEMS)
     return f'''<header class="site-header{' dark' if dark else ''}"><div class="wrap"><nav class="nav" aria-label="Primary">
   {LOCKUP}
   <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links"><i></i>Menu</button>
-  <div class="right" id="nav-links"><ul>{links}</ul><a class="btn btn-primary" href="/contact.html">Send an inquiry {ARR}</a></div>
+  <div class="right" id="nav-links"><ul>{links}</ul><a class="btn btn-primary" href="{B("/contact.html")}">Send an inquiry {ARR}</a></div>
 </nav></div></header>'''
 
 FOOTER = f'''<footer class="site-footer on-dark"><div class="wrap">
   <div class="top">
     <div>{LOCKUP}<p>Complete IT solutions for businesses and public agencies in New York. We focus on your technology so you can focus on your work.</p></div>
-    <div><h4>Company</h4><ul><li><a href="/services.html">Services</a></li><li><a href="/government.html">Government contracts</a></li><li><a href="/contact.html">Contact</a></li></ul></div>
+    <div><h4>Company</h4><ul><li><a href="{B("/services.html")}">Services</a></li><li><a href="{B("/government.html")}">Government contracts</a></li><li><a href="{B("/contact.html")}">Contact</a></li></ul></div>
     <div><h4>Reach us</h4><ul><li><a href="tel:+19292693761">+1 (929) 269-3761</a></li><li><a href="mailto:info@janoons.com">info@janoons.com</a></li><li>New York, NY</li></ul></div>
   </div>
   <div class="bottom"><span>&copy; Janoon Inc. {datetime.date.today().year}</span><span>MBE certified &mdash; New York City &middot; New York State &middot; Port Authority of NY &amp; NJ</span></div>
@@ -42,9 +44,9 @@ def head(title, desc, path, noindex=False):
 <link rel="canonical" href="{c}">
 <meta property="og:type" content="website"><meta property="og:title" content="{title}"><meta property="og:description" content="{desc}"><meta property="og:url" content="{c}"><meta property="og:image" content="https://janoons.com/logo/janoon-og-image.png"><meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#061535">
-<link rel="icon" href="/logo/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/logo/janoon-icon-512.png">
-<link rel="preload" href="/fonts/SchibstedGrotesk-800-normal.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/fonts/PublicSans-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/fonts.css"><link rel="stylesheet" href="/styles.css">
+<link rel="icon" href="{B("/logo/favicon.svg")}" type="image/svg+xml"><link rel="apple-touch-icon" href="{B("/logo/janoon-icon-512.png")}">
+<link rel="preload" href="{B("/fonts/SchibstedGrotesk-800-normal.woff2")}" as="font" type="font/woff2" crossorigin><link rel="preload" href="{B("/fonts/PublicSans-400-normal.woff2")}" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{B("/fonts.css")}"><link rel="stylesheet" href="{B("/styles.css")}">
 {JSONLD}'''
 
 def page(title, desc, path, current, body, noindex=False):
@@ -61,7 +63,7 @@ def page(title, desc, path, current, body, noindex=False):
 {body}
 </main>
 {FOOTER}
-<script src="/script.js"></script>
+<script src="{B("/script.js")}"></script>
 </body>
 </html>
 '''
@@ -82,9 +84,9 @@ def svc_cards():
         feat = ' feature' if i==1 else (' wide' if i==len(SERVICES) else '')
         chips = "".join(f"<span>{c}</span>" for c in caps)
         if feat == ' wide':
-            out.append(f'<a class="svc{feat} rv" data-d="{min(i,5)}" href="/services.html#{slug}">{GO}<span class="n">0{i}</span><span class="body"><h3>{name}</h3><p>{desc}</p></span><span class="caps">{chips}</span></a>')
+            out.append(f'<a class="svc{feat} rv" data-d="{min(i,5)}" href="{B("/services.html")}#{slug}">{GO}<span class="n">0{i}</span><span class="body"><h3>{name}</h3><p>{desc}</p></span><span class="caps">{chips}</span></a>')
         else:
-            out.append(f'<a class="svc{feat} rv" data-d="{min(i,5)}" href="/services.html#{slug}">{GO}<span class="n">0{i}</span><h3>{name}</h3><p>{desc}</p><span class="caps">{chips}</span></a>')
+            out.append(f'<a class="svc{feat} rv" data-d="{min(i,5)}" href="{B("/services.html")}#{slug}">{GO}<span class="n">0{i}</span><h3>{name}</h3><p>{desc}</p><span class="caps">{chips}</span></a>')
     return "\n".join(out)
 
 CLIENTS = [("Metropolitan Transportation Authority","New York"),("NYC Health + Hospitals","New York"),("Nassau County","New York"),("City of Tacoma","Washington")]
@@ -100,7 +102,7 @@ def gov_band():
   <div class="rv"><p class="eyebrow">Government contracts</p><h2>Certified, and already on agency rosters.</h2>
     <p>Janoon Inc. is a Minority Business Enterprise with NAICS and NIGP codes on file &mdash; ready for public-sector procurement.</p>
     <ul class="certs"><li>MBE &middot; New York City</li><li>MBE &middot; New York State</li><li>MBE &middot; Port Authority NY &amp; NJ</li></ul>
-    <div class="btn-row"><a class="btn btn-primary" href="/government.html">View codes &amp; certifications {ARR}</a></div></div>
+    <div class="btn-row"><a class="btn btn-primary" href="{B("/government.html")}">View codes &amp; certifications {ARR}</a></div></div>
   <ul class="clients rv" data-d="2">{cl}</ul>
 </div></section>'''
 
@@ -112,11 +114,11 @@ QUOTE = '''<section class="quote section"><div class="wrap rv">
 
 def cta(title="Tell us what you&rsquo;re working on.", text="We&rsquo;ll scope the work, match it to the right service, and get back to you within one business day."):
     return f'''<section class="cta section"><div class="wrap"><div class="box on-dark rv">
-  <div><p class="eyebrow">Get started</p><h2>{title}</h2><p>{text}</p><div class="btn-row"><a class="btn btn-primary" href="/contact.html">Send an inquiry {ARR}</a></div></div>
+  <div><p class="eyebrow">Get started</p><h2>{title}</h2><p>{text}</p><div class="btn-row"><a class="btn btn-primary" href="{B("/contact.html")}">Send an inquiry {ARR}</a></div></div>
   <div class="side">
     <a href="tel:+19292693761"><span><small>Call</small>+1 (929) 269-3761</span>{ARR}</a>
     <a href="mailto:info@janoons.com"><span><small>E-mail</small>info@janoons.com</span>{ARR}</a>
-    <a href="/government.html"><span><small>Agencies</small>Certifications &amp; codes</span>{ARR}</a>
+    <a href="{B("/government.html")}"><span><small>Agencies</small>Certifications &amp; codes</span>{ARR}</a>
   </div>
 </div></div></section>'''
 
@@ -126,7 +128,7 @@ home = f'''<section class="hero on-dark"><div class="wrap">
     <p class="eyebrow rv">IT services &middot; New York, NY</p>
     <h1 class="rv" data-d="1">Complete IT solutions, so you can focus on <span class="serif-em">growing</span> your business.</h1>
     <p class="lead rv" data-d="2">Software, infrastructure, cloud, and staffing for businesses and public agencies. We focus on your technology while you focus on your work.</p>
-    <div class="btn-row rv" data-d="3"><a class="btn btn-coral" href="/contact.html">Send an inquiry {ARR}</a><a class="btn btn-secondary" href="/services.html">Explore services</a></div>
+    <div class="btn-row rv" data-d="3"><a class="btn btn-coral" href="{B("/contact.html")}">Send an inquiry {ARR}</a><a class="btn btn-secondary" href="{B("/services.html")}">Explore services</a></div>
     <div class="trust rv" data-d="4"><div><b>6</b>Service lines</div><div><b>3</b>MBE certifications</div><div><b>NY</b>Headquartered</div></div>
   </div>
   <aside class="cred rv" data-d="2" aria-label="Credentials">
@@ -190,7 +192,7 @@ government = f'''<section class="page-head on-dark"><div class="wrap">
   <div class="side">
     <div class="card rv"><h3>Certifications</h3><ul><li>MBE &mdash; New York City</li><li>MBE &mdash; New York State</li><li>MBE &mdash; Port Authority of NY &amp; NJ</li></ul></div>
     <div class="card rv" data-d="1"><h3>Agency clients</h3><ul>{"".join(f"<li>{n}</li>" for n,_ in CLIENTS)}</ul></div>
-    <div class="card rv" data-d="2"><h3>Procurement contact</h3><p style="margin:0 0 14px;font-size:15px;color:var(--ink-600)">Send your RFP or scope and we&rsquo;ll respond with certifications, references, and a point of contact.</p><a class="btn btn-primary" href="/contact.html" style="width:100%">Send an inquiry {ARR}</a></div>
+    <div class="card rv" data-d="2"><h3>Procurement contact</h3><p style="margin:0 0 14px;font-size:15px;color:var(--ink-600)">Send your RFP or scope and we&rsquo;ll respond with certifications, references, and a point of contact.</p><a class="btn btn-primary" href="{B("/contact.html")}" style="width:100%">Send an inquiry {ARR}</a></div>
   </div>
   <div><div class="rv"><h2>NAICS codes</h2>{table(naics,"NAICS codes")}</div><div class="rv"><h2>NIGP codes</h2>{table(nigp,"NIGP codes")}</div></div>
 </div></section>'''
@@ -202,7 +204,7 @@ contact = f'''<section class="page-head on-dark"><div class="wrap">
 <section class="section"><div class="wrap contact-grid">
   <div class="form-card rv">
     <div class="form-success" id="form-success" tabindex="-1"><h3 style="margin-bottom:8px">Thank you for contacting us.</h3><p style="margin:0">We have received your message and will be in touch soon.</p></div>
-    <form id="contact-form" name="contact" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="company" novalidate>
+    <form id="contact-form" name="contact" method="POST" action="{B("/thanks.html")}" data-netlify="true" netlify-honeypot="company" novalidate>
       <input type="hidden" name="form-name" value="contact">
       <p class="hp" aria-hidden="true"><label>Company <input name="company" tabindex="-1" autocomplete="off"></label></p>
       <div class="field"><label for="name">Name</label><input id="name" name="name" type="text" autocomplete="name" required><p class="help">Required.</p></div>
@@ -221,8 +223,8 @@ contact = f'''<section class="page-head on-dark"><div class="wrap">
   </dl>
 </div></section>'''
 
-thanks = f'''<section class="page-head on-dark"><div class="wrap"><div><p class="eyebrow">Contact</p><h1>Thank you for contacting us.</h1><p>We have received your message and will be in touch soon &mdash; usually within one business day. If it&rsquo;s urgent, call <a href="tel:+19292693761" style="color:#fff">+1 (929) 269-3761</a>.</p><div class="btn-row" style="margin-top:28px"><a class="btn btn-primary" href="/">Back to homepage {ARR}</a><a class="btn btn-secondary" href="/services.html">See our services</a></div></div></div></section>'''
-notfound = f'''<section class="page-head on-dark"><div class="wrap"><div><p class="eyebrow">404</p><h1>That page doesn&rsquo;t exist.</h1><p>Try the homepage, or get in touch directly.</p><div class="btn-row" style="margin-top:28px"><a class="btn btn-primary" href="/">Go to homepage {ARR}</a><a class="btn btn-secondary" href="/contact.html">Contact us</a></div></div></div></section>'''
+thanks = f'''<section class="page-head on-dark"><div class="wrap"><div><p class="eyebrow">Contact</p><h1>Thank you for contacting us.</h1><p>We have received your message and will be in touch soon &mdash; usually within one business day. If it&rsquo;s urgent, call <a href="tel:+19292693761" style="color:#fff">+1 (929) 269-3761</a>.</p><div class="btn-row" style="margin-top:28px"><a class="btn btn-primary" href="{B("/")}">Back to homepage {ARR}</a><a class="btn btn-secondary" href="{B("/services.html")}">See our services</a></div></div></div></section>'''
+notfound = f'''<section class="page-head on-dark"><div class="wrap"><div><p class="eyebrow">404</p><h1>That page doesn&rsquo;t exist.</h1><p>Try the homepage, or get in touch directly.</p><div class="btn-row" style="margin-top:28px"><a class="btn btn-primary" href="{B("/")}">Go to homepage {ARR}</a><a class="btn btn-secondary" href="{B("/contact.html")}">Contact us</a></div></div></div></section>'''
 
 PAGES = {
  "index.html": page("Janoon Inc. — Complete IT Solutions, New York, NY","Janoon Inc. is an MBE-certified IT firm in New York providing web and software development, network support, data management, cloud, Citrix, and professional staffing.","/","/",home),
